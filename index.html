@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ryoya's Journey to Graduation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        #gameBox {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        #scene {
+            min-height: 400px;
+            position: relative;
+        }
+        #characterImage {
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #4CAF50;
+        }
+        .troop {
+            display: none;
+            margin-top: 20px;
+        }
+        .troop img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 5px;
+        }
+        #progressBar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        #progress {
+            width: 0%;
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 1s;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .back-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #666;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .back-button:hover {
+            background-color: #555;
+        }
+        .choice-buttons {
+            display: none;
+        }
+        .result-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 1s;
+        }
+        .result-message {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px;
+        }
+        .result-image {
+            max-width: 400px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        #congrats {
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        #ganbare {
+            color: #FF4444;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .character-container {
+            display: inline-block;
+            text-align: center;
+            margin: 10px;
+        }
+        .final-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="gameBox">
+        <h1>Ryoya's Journey to Graduation</h1>
+        <div id="scene">
+            <div id="mainCharacter">
+                <img id="characterImage" src="ryoya.jpg" alt="Ryoya">
+                <p id="message"></p>
+            </div>
+            <div class="troop" id="troopDisplay"></div>
+        </div>
+        <div id="progressBar">
+            <div id="progress"></div>
+        </div>
+        <button id="nextButton" onclick="nextScene()">Start Journey</button>
+        <button class="back-button" onclick="previousScene()" style="display: none;">Go Back</button>
+        <div class="choice-buttons" id="choices">
+            <button onclick="makeChoice('yes')">Yes, I'm ready to graduate!</button>
+            <button onclick="makeChoice('no')">No, I need more time</button>
+        </div>
+        <div class="result-container" id="congratsContainer">
+            <div class="result-message" id="congrats">🎉 Congratulations Ryoya! You've Graduated! 🎉</div>
+            <img class="final-image" src="congrats.png" alt="Congratulations">
+        </div>
+        <div class="result-container" id="ganbareContainer">
+            <div class="result-message" id="ganbare">頑張れ Ryoya! Don't Give Up! 💪</div>
+            <img class="final-image" src="ganbare.jpg" alt="Ganbare">
+        </div>
+    </div>
+
+    <script>
+        const characters = [
+            {
+                name: "Erika",
+                message: "He taught me what \"kusa\" means, now I speak his tongue",
+                image: "erika.jpg"
+            },
+            {
+                name: "Koto",
+                message: "**",
+                image: "koto.jpg"
+            },
+            {
+                name: "Ayumu",
+                message: "Where do I begin... Thank you for being there and bringing us joyful moments. I spent fun and quality time with you. I wish you the best in the next chapter of your life.",
+                image: "ayumu.jpg"
+            },
+            {
+                name: "Zuo",
+                message: "**",
+                image: "zuo.jpg"
+            },
+            {
+                name: "Sakko",
+                message: "Thanks for everything and can't imagine we can't take train together anymore! Have a good one in new company! Cheers!!",
+                image: "sakko.jpg"
+            }
+        ];
+
+        let currentScene = 0;
+        let troops = [];
+
+        function nextScene() {
+            // Show back button after first scene
+            if (currentScene === 0) {
+                document.querySelector('.back-button').style.display = 'inline-block';
+            }
+
+            currentScene++;
+            document.getElementById('progress').style.width = `${(currentScene / (characters.length + 2)) * 100}%`;
+
+            if (currentScene === 1) {
+                document.getElementById('message').innerHTML = 
+                    `<div style="font-size: 20px; margin-bottom: 15px;">
+                        Ryoya: Time to start my final journey!
+                    </div>`;
+                document.getElementById('nextButton').textContent = "Meet Friends";
+            }
+            else if (currentScene <= characters.length + 1) {
+                const character = characters[currentScene - 2];
+                document.getElementById('message').innerHTML = 
+                    `<div style="font-size: 22px; color: #444; margin-bottom: 10px;">
+                        ${character.name}:
+                    </div>
+                    <div style="font-style: italic; color: #666; line-height: 1.4;">
+                        "${character.message}"
+                    </div>`;
+                troops.push(character);
+                updateTroopDisplay();
+                document.getElementById('nextButton').textContent = "Continue Journey";
+            } else if (currentScene === characters.length + 2) {
+                document.getElementById('message').textContent = 
+                    "Everyone is walking together towards the final destination...";
+                document.getElementById('nextButton').textContent = "Arrive at Goal";
+            } else {
+                document.getElementById('message').innerHTML = 
+                    `<div style="font-size: 22px; color: #444;">
+                        After this wonderful journey with friends...
+                        <br>Ryoya, are you ready to graduate?
+                    </div>`;
+                document.getElementById('nextButton').style.display = 'none';
+                document.getElementById('choices').style.display = 'block';
+            }
+        }
+
+        function previousScene() {
+            if (currentScene > 1) {
+                currentScene -= 2; // Go back two steps because nextScene() will add one
+                troops.pop(); // Remove the last character from troops
+                
+                // Reset the choice buttons if we're going back from the final scene
+                document.getElementById('choices').style.display = 'none';
+                document.getElementById('nextButton').style.display = 'block';
+                
+                // Hide result containers if they were shown
+                document.getElementById('congratsContainer').style.display = 'none';
+                document.getElementById('ganbareContainer').style.display = 'none';
+                
+                // Show the scene again if it was hidden
+                document.getElementById('scene').style.display = 'block';
+                
+                nextScene(); // This will rebuild the current scene
+            }
+        }
+
+        function updateTroopDisplay() {
+            const troopDisplay = document.getElementById('troopDisplay');
+            troopDisplay.style.display = 'block';
+            const mainCharacterHtml = `
+                <div class="character-container">
+                    <img src="ryoya.jpg" 
+                         alt="Ryoya" title="Ryoya" 
+                         style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #4CAF50; object-fit: cover;">
+                    <div style="margin-top: 5px; font-weight: bold;">Ryoya</div>
+                </div>`;
+            
+            const troopsHtml = troops.map(char => `
+                <div class="character-container">
+                    <img src="${char.image}" 
+                         alt="${char.name}" 
+                         title="${char.name}"
+                         style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid #666; object-fit: cover;">
+                    <div style="margin-top: 5px;">${char.name}</div>
+                </div>
+            `).join('');
+
+            troopDisplay.innerHTML = mainCharacterHtml + troopsHtml;
+        }
+
+        function makeChoice(choice) {
+            document.getElementById('choices').style.display = 'none';
+            document.getElementById('scene').style.display = 'none';
+            
+            if (choice === 'yes') {
+                document.getElementById('congratsContainer').style.display = 'block';
+            } else {
+                document.getElementById('ganbareContainer').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
